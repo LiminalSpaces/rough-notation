@@ -29,6 +29,7 @@ export interface RoughAnnotation extends RoughAnnotationConfigBase {
     show(): void;
     hide(): void;
     remove(): void;
+    type: RoughAnnotationType;
 }
 export interface RoughAnnotationGroup {
     show(): void;
