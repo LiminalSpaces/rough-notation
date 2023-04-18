@@ -22,9 +22,10 @@ function getOptions(type: RoughOptionsType, seed: number): ResolvedOptions {
     dashOffset: -1,
     dashGap: -1,
     zigzagOffset: -1,
-    combineNestedSvgPaths: false,
+    // combineNestedSvgPaths: false,
     disableMultiStroke: type !== 'double',
     disableMultiStrokeFill: false,
+    preserveVertices: true,
     seed
   };
 }

@@ -56,6 +56,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
       this.refresh();
     }
   }
+  get type() { return this._config.type; }
 
   private _resizeListener = () => {
     if (!this._resizing) {
