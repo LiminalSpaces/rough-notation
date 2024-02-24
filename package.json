@@ -4,13 +4,18 @@
   "type": "module",
   "description": "Create and animate hand-drawn annotations on a web page",
   "main": "dist/index.mjs",
-  "module": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.mts",
   "scripts": {
     "build": "unbuild",
     "prepack": "npm run build",
     "release": "bumpp && pnpm publish",
     "lint": "tslint -p tsconfig.json"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    }
   },
   "repository": {
     "type": "git",
