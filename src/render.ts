@@ -237,8 +237,8 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       pathElements.push(path);
     }
 
-    if (config.zIndex) {
-        svg.setAttribute("z-index", `${config.zIndex}`)
+    if (config.zIndex !== undefined) {
+        svg.style.zIndex = `${config.zIndex}`;
     }
 
     if (animate) {
