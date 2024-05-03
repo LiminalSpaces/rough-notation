@@ -69,7 +69,7 @@ function parsePadding(config: RoughAnnotationConfig): FullPadding {
   return [5, 5, 5, 5];
 }
 
-export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig, animationGroupDelay: number, animationDuration: number, seed: number) {
+export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig, animationGroupDelay: number, animationDuration: number, seed: number): Promise<void> {
   const opList: OpSet[] = [];
   let strokeWidth = config.strokeWidth || 2;
   const padding = parsePadding(config);
@@ -246,8 +246,14 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
         style.animation = `rough-notation-dash ${duration}ms ease-out ${delay}ms forwards`;
         durationOffset += duration;
       }
+      return sleep(animationDuration + animationGroupDelay);
     }
   }
+  return sleep(0);
+}
+
+function sleep(ms: number) {
+  return new Promise<void>(resolve => setTimeout(resolve, ms));
 }
 
 function opsToPath(opList: OpSet[]): string[] {
