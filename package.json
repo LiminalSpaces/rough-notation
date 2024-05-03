@@ -10,11 +10,6 @@
     "build": "rm -rf lib && tsc && rollup -c",
     "lint": "tslint -p tsconfig.json"
   },
-  "exports": {
-    ".": {
-      "import": "./dist/index.cjs"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LiminalSpaces/rough-notation.git"
