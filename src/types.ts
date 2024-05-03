@@ -28,6 +28,7 @@ export interface RoughAnnotationConfigBase {
   brackets?: BracketType | BracketType[]; // defaults to 'right'
   delay?: number; // defaults to 0
   opacity?: number; // defaults to 1
+  zIndex?: number;
   /**
    * Additional class to add to the root SVG element
    */

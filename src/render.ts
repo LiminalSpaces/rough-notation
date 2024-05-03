@@ -237,6 +237,10 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       pathElements.push(path);
     }
 
+    if (config.zIndex) {
+        svg.setAttribute("z-index", `${config.zIndex}`)
+    }
+
     if (animate) {
       let durationOffset = 0;
       for (let i = 0; i < pathElements.length; i++) {
