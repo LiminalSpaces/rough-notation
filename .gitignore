@@ -1,7 +1,7 @@
 node_modules
 bin
 dist
-lib
+# lib
 demo
 node_modules
 .pnp.*
