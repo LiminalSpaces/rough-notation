@@ -1,7 +1,6 @@
 {
   "name": "@LiminalSpaces/rough-notation",
   "version": "0.0.2",
-  "type": "module",
   "description": "Create and animate hand-drawn annotations on a web page",
   "main": "lib/rough-notation.cjs.js",
   "module": "lib/rough-notation.esm.js",
@@ -18,9 +17,6 @@
     "annotate",
     "rough",
     "sketchy"
-  ],
-  "files": [
-    "dist"
   ],
   "author": "Preet Shihn",
   "license": "MIT",
