@@ -17,7 +17,7 @@ function getDefaultOptions(): ResolvedOptions {
 }
 
 
-function getOptions(type: RoughOptionsType, seed: number): ResolvedOptions {
+function getOptions(type: RoughOptionsType, seed: number, overrides?: Partial<ResolvedOptions>): ResolvedOptions {
   return {
     ...getDefaultOptions(),
     maxRandomnessOffset: 2,
@@ -39,7 +39,8 @@ function getOptions(type: RoughOptionsType, seed: number): ResolvedOptions {
     disableMultiStroke: type !== 'double',
     disableMultiStrokeFill: false,
     preserveVertices: true,
-    seed
+    seed,
+    ...overrides,
   };
 }
 
@@ -76,7 +77,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
   const animate = (config.animate === undefined) ? true : (!!config.animate);
   const iterations = config.iterations || 2;
   const rtl = config.rtl ? 1 : 0;
-  const o = getOptions('single', seed);
+  const o = getOptions('single', seed, config.overrides);
 
   switch (config.type) {
     case 'underline': {
@@ -181,7 +182,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       break;
     }
     case 'circle': {
-      const doubleO = getOptions('double', seed);
+        const doubleO = getOptions('double', seed, config.overrides);
       const width = rect.w + (padding[1] + padding[3]);
       const height = rect.h + (padding[0] + padding[2]);
       const x = rect.x - padding[3] + (width / 2);
@@ -197,7 +198,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       break;
     }
     case 'highlight': {
-      const o = getOptions('highlight', seed);
+        const o = getOptions('highlight', seed, config.overrides);
       strokeWidth = rect.h * 0.95;
       const y = rect.y + (rect.h / 2);
       for (let i = rtl; i < iterations + rtl; i++) {
