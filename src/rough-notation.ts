@@ -9,6 +9,9 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private _config: RoughAnnotationConfig;
   private _resizing = false;
   private _ro?: any; // ResizeObserver is not supported in typescript std lib yet
+  // The window the listeners are on: the element's own, which for an element
+  // in a popout is not the window this script was loaded in.
+  private _win?: Window;
   private _seed = randomSeed();
 
   private _e: HTMLElement;
@@ -94,8 +97,9 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
   private attach() {
     if (this._state === 'unattached' && this._e.parentElement) {
-      ensureKeyframes();
-      const svg = this._svg = document.createElementNS(SVG_NS, 'svg');
+      const doc = this._e.ownerDocument;
+      ensureKeyframes(doc);
+      const svg = this._svg = doc.createElementNS(SVG_NS, 'svg');
       svg.setAttribute('class', ['rough-annotation', this._config.class || ''].filter(Boolean).join(' '));
       const style = svg.style;
       style.position = 'absolute';
@@ -111,7 +115,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
       // ensure e is positioned
       if (prepend) {
-        const computedPos = window.getComputedStyle(this._e).position;
+        const computedPos = this.ownerWindow().getComputedStyle(this._e).position;
         const unpositioned = (!computedPos) || (computedPos === 'static');
         if (unpositioned) {
           this._e.style.position = 'relative';
@@ -121,18 +125,27 @@ class RoughAnnotationImpl implements RoughAnnotation {
     }
   }
 
+  private ownerWindow(): Window {
+    return this._e.ownerDocument.defaultView || window;
+  }
+
   private detachListeners() {
-    window.removeEventListener('resize', this._resizeListener);
-    if (this._ro) {
-      this._ro.unobserve(this._e);
+    if (this._win) {
+      this._win.removeEventListener('resize', this._resizeListener);
     }
+    if (this._ro) {
+      this._ro.disconnect();
+      this._ro = undefined;
+    }
+    this._win = undefined;
   }
 
   private attachListeners() {
     this.detachListeners();
-    window.addEventListener('resize', this._resizeListener, { passive: true });
-    if ((!this._ro) && ('ResizeObserver' in window)) {
-      this._ro = new (window as any).ResizeObserver((entries: any) => {
+    const win = this._win = this.ownerWindow();
+    win.addEventListener('resize', this._resizeListener, { passive: true });
+    if ('ResizeObserver' in win) {
+      this._ro = new (win as any).ResizeObserver((entries: any) => {
         for (const entry of entries) {
           if (entry.contentRect) {
             this._resizeListener();
@@ -192,6 +205,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
       case 'unattached':
         break;
       case 'showing':
+        this.followElement();
         this.hide();
         if (this._svg) {
           await this.render(this._svg, true);
@@ -199,10 +213,20 @@ class RoughAnnotationImpl implements RoughAnnotation {
         break;
       case 'not-showing':
         this.attach();
+        this.followElement();
         if (this._svg) {
           await this.render(this._svg, false);
         }
         break;
+    }
+  }
+
+  // The element moved to another window (a panel popped out or docked back):
+  // put the keyframes in its document and listen on its window.
+  private followElement() {
+    if (this._win && this._win !== this.ownerWindow()) {
+      ensureKeyframes(this._e.ownerDocument);
+      this.attachListeners();
     }
   }
 

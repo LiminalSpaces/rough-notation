@@ -1,1 +1,1 @@
-export declare function ensureKeyframes(): void;
+export declare function ensureKeyframes(doc: Document): void;

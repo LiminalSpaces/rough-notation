@@ -220,7 +220,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
     const setAttr = (p: SVGPathElement, an: string, av: string) => p.setAttribute(an, av);
 
     for (const d of pathStrings) {
-      const path = document.createElementNS(SVG_NS, 'path');
+      const path = svg.ownerDocument.createElementNS(SVG_NS, 'path');
       setAttr(path, 'd', d);
       setAttr(path, 'fill', 'none');
       setAttr(path, 'stroke', config.color || 'currentColor');

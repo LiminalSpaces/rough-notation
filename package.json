@@ -7,7 +7,8 @@
   "types": "lib/rough-notation.d.ts",
   "scripts": {
     "build": "rm -rf lib && tsc && rollup -c",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tsconfig.json",
+    "test": "node test/popout.test.mjs"
   },
   "repository": {
     "type": "git",
