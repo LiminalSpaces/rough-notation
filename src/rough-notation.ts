@@ -129,9 +129,20 @@ class RoughAnnotationImpl implements RoughAnnotation {
     return this._e.ownerDocument.defaultView || window;
   }
 
+  // The window the listeners are on is closing (a popout): the element has
+  // moved on, or goes with it. Listen where the element is now, if anywhere.
+  private _unloadListener = () => {
+    if (this._state !== 'unattached' && this._e.isConnected && this.ownerWindow() !== this._win) {
+      this.followElement();
+    } else {
+      this.detachListeners();
+    }
+  }
+
   private detachListeners() {
     if (this._win) {
       this._win.removeEventListener('resize', this._resizeListener);
+      this._win.removeEventListener('pagehide', this._unloadListener);
     }
     if (this._ro) {
       this._ro.disconnect();
@@ -144,6 +155,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
     this.detachListeners();
     const win = this._win = this.ownerWindow();
     win.addEventListener('resize', this._resizeListener, { passive: true });
+    win.addEventListener('pagehide', this._unloadListener);
     if ('ResizeObserver' in win) {
       this._ro = new (win as any).ResizeObserver((entries: any) => {
         for (const entry of entries) {
@@ -222,7 +234,9 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   // The element moved to another window (a panel popped out or docked back):
-  // put the keyframes in its document and listen on its window.
+  // put the keyframes in its document and listen on its window. Checked on
+  // each show() and when the old window closes; a moved annotation is not
+  // redrawn until something shows it again or it is resized.
   private followElement() {
     if (this._win && this._win !== this.ownerWindow()) {
       ensureKeyframes(this._e.ownerDocument);

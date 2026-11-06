@@ -15,4 +15,5 @@ Changes in this fork:
   uses the element's `ownerDocument` and its `defaultView` for the SVG, the
   keyframes `<style>` (once per document), `getComputedStyle`, `resize` and
   `ResizeObserver`, and follows the element when it moves between windows
+  (on the next `show()`, or when the old window closes)
   (`yarn build && yarn test`; the test needs Playwright's Chromium)
